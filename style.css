@@ -1,0 +1,434 @@
+/* style.css - Styles for the Lorebook Editor */
+
+/* =============================================================================
+   Global Styles & Basic Elements
+   ============================================================================= */
+
+body {
+    font-family: sans-serif; /* Use a common sans-serif font stack */
+    line-height: 1.6; /* Improve readability with slightly increased line spacing */
+    margin: 20px; /* Add some space around the entire page content */
+    background-color: #f9f9f9; /* Light grey background for the page */
+}
+
+h1 {
+    border-bottom: 2px solid #ccc; /* Underline the main heading */
+    padding-bottom: 10px; /* Space between heading text and underline */
+    color: #333; /* Dark grey color for the heading text */
+}
+
+/* =============================================================================
+   Main Container
+   ============================================================================= */
+
+.lorebook-container {
+    margin-top: 20px; /* Space above the list of lore entries */
+}
+
+/* =============================================================================
+   Individual Lore Entry Styling
+   ============================================================================= */
+
+/* Base style for each lore entry block */
+.lore-entry {
+    background-color: #fff; /* White background for the entry */
+    border: 1px solid #ddd; /* Light grey border */
+    margin-bottom: 10px; /* Space between entries */
+    border-radius: 4px; /* Slightly rounded corners */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05); /* Subtle shadow for depth */
+    overflow: hidden; /* Ensure content like rotated icons doesn't overflow bounds */
+    /* --- Drag & Drop Styling --- */
+    cursor: grab; /* Indicate the item is draggable */
+}
+/* Style when the entry is actively being clicked/dragged */
+.lore-entry:active {
+     cursor: grabbing; /* Indicate active dragging */
+}
+
+/* Style applied via JavaScript when an entry is being dragged */
+.lore-entry.dragging {
+    /* opacity: 0.5; */ /* Optional: Make the dragged item semi-transparent */
+    border: 2px dashed #007bff; /* Blue dashed border to highlight */
+    cursor: grabbing; /* Ensure grabbing cursor persists */
+}
+
+/* Style for the placeholder shown during drag-and-drop */
+.drag-over-placeholder {
+    height: 5px; /* Thin line indicating drop target position */
+    background-color: #007bff; /* Blue color matching the dragging border */
+    margin: 5px 0; /* Space above and below the placeholder */
+    list-style-type: none; /* Ensure no list bullets appear */
+    border-radius: 2px; /* Slightly rounded ends */
+}
+
+
+/* =============================================================================
+   Entry Summary (Header) Styling
+   ============================================================================= */
+
+/* The always-visible header part of a lore entry */
+.entry-summary {
+    padding: 10px 15px; /* Padding inside the summary bar */
+    border-bottom: 1px solid #ddd; /* Line separating summary from details */
+    display: flex; /* Use flexbox for horizontal layout */
+    align-items: center; /* Vertically align items in the summary bar */
+    font-weight: bold; /* Make summary text bold */
+    color: #444; /* Slightly lighter text color */
+    transition: background-color 0.3s ease; /* Smooth background color change on hover/state change */
+    cursor: pointer; /* Indicate the summary bar is clickable (to toggle details) */
+}
+
+/* Background color styling based on enabled/disabled state */
+.entry-summary.entry-enabled { background-color: rgba(144, 238, 144, 0.3); /* Light green tint for enabled */ }
+.entry-summary.entry-enabled:hover { background-color: rgba(144, 238, 144, 0.5); /* Darker green tint on hover */ }
+.entry-summary.entry-disabled { background-color: rgba(255, 182, 193, 0.4); /* Light pink tint for disabled */ }
+.entry-summary.entry-disabled:hover { background-color: rgba(255, 182, 193, 0.6); /* Darker pink tint on hover */ }
+
+/* Styling for the index number display */
+.entry-index-display {
+    margin-right: 5px; /* Small space after the index */
+    white-space: nowrap; /* Prevent index number from wrapping */
+    /* Prevent selecting index text when dragging/clicking the summary */
+    pointer-events: none; /* Ignore pointer events for selection */
+    user-select: none; /* Standard property */
+    -moz-user-select: none; /* Firefox */
+    -webkit-user-select: none; /* Chrome, Safari, Opera */
+    -ms-user-select: none; /* IE/Edge */
+}
+/* Styling for the "(Orig: X)" part of the index display */
+.entry-index-display small {
+    font-weight: normal; /* Normal weight for the 'Orig' part */
+    font-size: 0.8em; /* Smaller font size */
+    color: #555; /* Slightly muted color */
+}
+
+
+/* Styling for the entry title (comment) display */
+.entry-title {
+    flex-grow: 1; /* Allow the title to take up available space */
+    margin-right: 15px; /* Space between title and controls */
+    /* Prevent selecting title text when dragging/clicking the summary */
+    pointer-events: none; /* Ignore pointer events */
+    user-select: none; /* Standard */
+    -moz-user-select: none; /* Firefox */
+    -webkit-user-select: none; /* Chrome, Safari, Opera */
+    -ms-user-select: none; /* IE/Edge */
+    /* Handle long titles gracefully */
+    overflow: hidden; /* Hide overflowing text */
+    text-overflow: ellipsis; /* Add "..." for hidden text */
+    white-space: nowrap; /* Keep title on a single line */
+}
+
+/* =============================================================================
+   Entry Controls (Buttons in Summary)
+   ============================================================================= */
+
+/* Container for the buttons on the right side of the summary */
+.entry-controls {
+    display: flex; /* Align buttons horizontally */
+    align-items: center; /* Vertically center buttons */
+    margin-left: auto; /* Push the controls to the far right */
+    white-space: nowrap; /* Prevent controls from wrapping */
+}
+
+/* Base styling for buttons AND the toggle icon within the controls */
+.entry-controls button,
+.toggle-icon {
+    background: none; /* Remove default button background */
+    border: none; /* Remove default button border */
+    cursor: pointer; /* Indicate clickable */
+    padding: 2px 5px; /* Small padding around button content */
+    margin-left: 5px; /* Space between buttons */
+    font-size: 1.1em; /* Slightly larger font size for icons/text */
+    font-weight: bold; /* Make button text/icons bold */
+    line-height: 1; /* Prevent extra vertical space */
+    transition: color 0.2s ease, transform 0.2s ease; /* Smooth transitions for color/transform */
+    color: #555; /* Default grey color */
+     /* Ensure cursor remains pointer even when dragging starts nearby */
+     cursor: pointer !important;
+}
+/* Hover state for control buttons and toggle icon */
+.entry-controls button:hover,
+.toggle-icon:hover {
+    color: #000; /* Darken color on hover */
+}
+/* Disabled state for buttons (e.g., move up/down at limits) */
+.entry-controls button:disabled {
+    color: #ccc; /* Light grey for disabled state */
+    cursor: not-allowed; /* Indicate non-interactive */
+}
+
+
+/* Specific button styling within controls */
+.toggle-enable-btn.enabled { color: #28a745; } /* Green checkmark for enabled */
+.toggle-enable-btn.disabled { color: #dc3545; } /* Red cross for disabled */
+
+.move-up-btn, .move-down-btn { font-size: 1.0em; } /* Slightly smaller arrows */
+
+.delete-entry-btn { color: #dc3545; } /* Red color for delete button */
+.delete-entry-btn:hover { color: #a71d2a; } /* Darker red on hover */
+
+/* Styling for the expand/collapse '+' icon */
+.toggle-icon {
+    margin-left: 8px; /* Slightly more space before the toggle icon */
+    font-size: 1.2em; /* Make the '+' icon a bit larger */
+    transition: transform 0.2s ease-in-out; /* Smooth rotation animation */
+}
+/* Rotated state for the toggle icon when details are open */
+.entry-summary .toggle-icon.active {
+     transform: rotate(45deg); /* Rotate '+' to look like 'x' */
+}
+
+/* =============================================================================
+   Entry Details (Collapsible Form Area)
+   ============================================================================= */
+
+/* The collapsible area containing the form fields */
+.entry-details {
+    padding: 20px; /* Generous padding inside the details area */
+    border-top: 1px solid #eee; /* Lighter border separating from summary */
+    background-color: #fff; /* White background */
+    display: none; /* Hidden by default */
+}
+/* Style when the details area is visible (toggled by JS) */
+.entry-details.active { display: block; }
+
+
+/* --- Redundant Button Styles (Check if needed/duplicates from above) --- */
+/* These styles seem to repeat or slightly modify the styles already defined
+   for .entry-controls button and .toggle-icon. Review if all are necessary. */
+.entry-controls button,
+.toggle-icon {
+    /* background: none; */ /* Already set */
+    /* border: none; */ /* Already set */
+    /* cursor: pointer; */ /* Already set */
+    /* padding: 2px 5px; */ /* Already set */
+    margin-left: 6px; /* Slightly different margin? */
+    font-size: 1.0em; /* Different font size? */
+    /* font-weight: bold; */ /* Already set */
+    /* line-height: 1; */ /* Already set */
+    /* transition: color 0.2s ease, transform 0.2s ease; */ /* Already set */
+    /* color: #555; */ /* Already set */
+    vertical-align: middle; /* Added vertical alignment */
+}
+
+
+.toggle-enable-btn { font-size: 1.1em; } /* Consistent with above */
+.toggle-enable-btn.enabled { color: #28a745; } /* Consistent */
+.toggle-enable-btn.disabled { color: #dc3545; } /* Consistent */
+
+.add-above-btn, .add-below-btn {
+    color: #007bff; /* Blue color for add buttons */
+    font-weight: bold; /* Ensure bold */
+}
+.duplicate-entry-btn {
+    color: #6f42c1; /* Purple color for duplicate button */
+    font-weight: bold; /* Ensure bold */
+}
+
+.move-up-btn, .move-down-btn { /* No specific styles here, inherits base */ }
+
+.delete-entry-btn { color: #dc3545; font-size: 1.1em; } /* Consistent font size */
+.delete-entry-btn:hover { color: #a71d2a; } /* Consistent hover */
+
+.toggle-icon {
+    margin-left: 8px; /* Consistent margin */
+    font-size: 1.2em; /* Consistent size */
+    transition: transform 0.2s ease-in-out; /* Consistent transition */
+}
+.entry-summary .toggle-icon.active {
+     transform: rotate(45deg); /* Consistent rotation */
+}
+/* --- End Redundant Styles --- */
+
+
+/* =============================================================================
+   Form Element Styling (Inside Entry Details)
+   ============================================================================= */
+
+/* Styling for containers holding a label and input/textarea */
+.form-group {
+    margin-bottom: 15px; /* Space below each form group */
+}
+/* Styling for rows containing multiple form groups */
+.form-row {
+    display: flex; /* Arrange groups horizontally */
+    flex-wrap: wrap; /* Allow groups to wrap onto the next line on small screens */
+    /* Gutter technique: Negative margin on row... */
+    margin-left: -10px;
+    margin-right: -10px;
+    margin-bottom: 15px; /* Space below the row */
+}
+/* Styling for form groups placed inside a form row */
+.form-row > .form-group {
+    flex: 1; /* Allow groups to grow equally to fill space */
+    min-width: 250px; /* Minimum width before wrapping */
+    /* ...and padding on items to create space between them */
+    padding-left: 10px;
+    padding-right: 10px;
+    box-sizing: border-box; /* Include padding in width calculation */
+    margin-bottom: 0; /* Remove bottom margin as it's handled by form-row */
+}
+/* Styling for form labels */
+.form-group label {
+    display: block; /* Make label take its own line */
+    font-weight: bold; /* Bold label text */
+    margin-bottom: 5px; /* Space between label and input */
+    color: #555; /* Slightly muted label color */
+}
+/* Styling for text input fields */
+.form-group input[type="text"] {
+    width: 100%; /* Make input fill its container */
+    padding: 8px 10px; /* Padding inside the input */
+    border: 1px solid #ccc; /* Standard border */
+    border-radius: 4px; /* Rounded corners */
+    box-sizing: border-box; /* Include padding/border in width calculation */
+    font-size: 0.95em; /* Slightly smaller font size for inputs */
+}
+
+/* Specific styling for the main content textarea */
+.form-group textarea[name="content"] {
+    width: 100%; /* Fill container width */
+    padding: 10px 12px; /* More padding for textarea */
+    border: 1px solid #ccc; /* Standard border */
+    border-radius: 4px; /* Rounded corners */
+    box-sizing: border-box; /* Include padding/border in width */
+    font-size: 1.1em; /* Slightly larger font for content */
+    line-height: 1.5; /* More readable line spacing */
+    min-height: 80px; /* Minimum height before growing */
+    resize: none; /* Disable manual resizing handle */
+    overflow-y: hidden; /* Hide scrollbar (for JS auto-grow) */
+}
+
+
+/* Styling for checkboxes and radio buttons */
+.form-group input[type="checkbox"],
+.form-group input[type="radio"] {
+    margin-right: 5px; /* Space between button and its label */
+    vertical-align: middle; /* Align button with label text */
+}
+/* Styling for labels associated with checkboxes/radio buttons */
+.form-group .checkbox-label,
+.form-group .radio-label {
+    display: inline-block; /* Keep label on the same line as button */
+    margin-right: 15px; /* Space between radio/checkbox options */
+    font-weight: normal; /* Normal font weight for these labels */
+    vertical-align: middle; /* Align label text with button */
+}
+/* Styling for the "Strategy:" label */
+.strategy-group label {
+    font-weight: bold; /* Make Strategy label bold */
+}
+/* Color coding for Strategy option labels based on the preceding radio button's class */
+.strategy-normal + label { color: #28a745; } /* Green for Normal */
+.strategy-constant + label { color: #007bff; } /* Blue for Constant */
+.strategy-vectorized + label { color: #6f42c1; } /* Purple for Vectorized */
+
+/* Styling for horizontal rule separators */
+hr {
+    border: none; /* Remove default 3D border */
+    border-top: 1px solid #eee; /* Use a thin, light line */
+    margin: 20px 0; /* Space above and below the line */
+}
+
+/* =============================================================================
+   Status Messages & Global Action Buttons
+   ============================================================================= */
+
+/* Styling for error message boxes */
+.error {
+    color: #D8000C; /* Dark red text */
+    background-color: #FFD2D2; /* Light red background */
+    font-weight: bold;
+    border: 1px solid #D8000C; /* Dark red border */
+    padding: 15px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+}
+/* Styling for the "Please upload a file" message */
+.no-data {
+    color: #555; /* Muted text color */
+    font-style: italic;
+    background-color: #eee; /* Light grey background */
+    padding: 15px;
+    border: 1px solid #ccc; /* Grey border */
+    margin-top: 20px;
+    border-radius: 4px;
+}
+
+/* Container for the global "Add Entry" and "Export" buttons */
+.action-buttons {
+    margin-bottom: 20px; /* Space below the buttons */
+}
+/* Styling for the main "Add New Entry" button */
+.add-entry-button {
+    display: inline-block; /* Allow side-by-side placement with export */
+    margin: 0 10px 0 0; /* Space to the right */
+    padding: 10px 15px;
+    background-color: #28a745; /* Green background */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    text-align: center;
+    transition: background-color 0.2s ease;
+}
+.add-entry-button:hover {
+    background-color: #218838; /* Darker green on hover */
+}
+
+/* Styling for the "Export to JSON" button */
+.export-json-button {
+    display: inline-block;
+    margin: 0; /* No extra margin needed */
+    padding: 10px 15px;
+    background-color: #007bff; /* Blue background */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    text-align: center;
+    transition: background-color 0.2s ease;
+}
+.export-json-button:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+/* Disabled state for export button (e.g., if nothing to export) */
+.export-json-button:disabled {
+    background-color: #cccccc; /* Grey background */
+    cursor: not-allowed;
+}
+
+/* =============================================================================
+   Responsive Design
+   ============================================================================= */
+
+/* Styles for screens smaller than 600px (e.g., mobile phones) */
+@media (max-width: 600px) {
+    /* Stack form groups within a row vertically */
+    .form-row > .form-group {
+        min-width: 100%; /* Make each group take full width */
+        margin-bottom: 15px; /* Add back bottom margin when stacked */
+    }
+    /* Remove bottom margin from the row itself when items stack */
+    .form-row { margin-bottom: 0; }
+
+    /* Allow entry title text to wrap on small screens */
+    .entry-title {
+        white-space: normal; /* Allow wrapping */
+    }
+    /* Placeholder for potential future controls adjustments on small screens */
+    .entry-controls {
+        /* Example: could adjust flex-wrap or spacing if needed */
+        /* flex-wrap: wrap; */
+    }
+    /* Make global action buttons take full width and stack vertically */
+    .action-buttons button {
+        display: block; /* Change from inline-block to block */
+        width: 100%; /* Make button fill width */
+        margin: 0 0 10px 0; /* Adjust margin for vertical stacking */
+        box-sizing: border-box; /* Include padding/border in width */
+    }
+}
