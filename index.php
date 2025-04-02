@@ -169,7 +169,7 @@ $showEditorArea = !empty($loreEntries) || ($_SERVER['REQUEST_METHOD'] === 'POST'
 
     <?php // --- File Upload Form --- ?>
     <form method="post" enctype="multipart/form-data" style="margin-bottom: 20px; padding: 15px; background-color: #f0f0f0; border: 1px solid #ccc; border-radius: 5px;">
-        <label for="lorebookFile" style="display: block; margin-bottom: 8px; font-weight: bold;">Upload Lorebook (.json):</label>
+        <label for="lorebookFile" style="display: block; margin-bottom: 8px; font-weight: bold;">Load Lorebook (.json):</label>
         <?php /* File input: accepts only .json files, required for form submission */ ?>
         <input type="file" id="lorebookFile" name="lorebookFile" accept=".json" required style="margin-right: 10px;">
         <?php /* Submit button to trigger the file upload and page reload */ ?>
